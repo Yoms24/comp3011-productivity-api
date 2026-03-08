@@ -2,6 +2,7 @@ from django.http import JsonResponse
 import json
 from .models import Habit
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Count
 
 def habit_list(request):
     habits = Habit.objects.all()
@@ -108,3 +109,16 @@ def habit_detail(request, habit_id):
 
     except Habit.DoesNotExist:
         return JsonResponse({"error": "Habit not found"}, status=404)
+    
+def habit_summary(request):
+    total_habits = Habit.objects.count()
+    daily_habits = Habit.objects.filter(frequency__iexact='Daily').count()
+    weekly_habits = Habit.objects.filter(frequency__iexact='Weekly').count()
+
+    data = {
+        "total_habits": total_habits,
+        "daily_habits": daily_habits,
+        "weekly_habits": weekly_habits,
+    }
+
+    return JsonResponse(data)
