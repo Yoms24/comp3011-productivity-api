@@ -1,0 +1,204 @@
+{
+  "info": {
+    "_postman_id": "020dd914-6e9f-4293-a8d9-4e4ffadaad4a",
+    "name": "COMP3011 Productivity API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53013975",
+    "_collection_link": "https://go.postman.co/collection/53013975-020dd914-6e9f-4293-a8d9-4e4ffadaad4a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Get All Habits",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/habits/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "habits",
+            ""
+          ]
+        },
+        "description": "Returns all habits stored in the database.\n\nMethod: GET  \nURL: /api/habits/  \nSuccess response: 200 OK\n\nExample use:  \nRetrieves a JSON list of all habits."
+      },
+      "response": []
+    },
+    {
+      "name": "Get 1 Habit",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/habits/1/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "habits",
+            "1",
+            ""
+          ]
+        },
+        "description": "Returns one habit by its ID.\n\nMethod: GET  \nURL: /api/habits//  \nSuccess response: 200 OK  \nError response: 404 Not Found\n\nExample use:  \nRetrieves one habit as JSON if it exists."
+      },
+      "response": []
+    },
+    {
+      "name": "Create Habit",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Walk Daily\",\r\n  \"description\": \"Walk for 20 minutes\",\r\n  \"frequency\": \"Daily\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/habits/create/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "habits",
+            "create",
+            ""
+          ]
+        },
+        "description": "Creates a new habit.\n\nMethod: POST  \nURL: /api/habits/create/  \nSuccess response: 201 Created  \nError response: 400 Bad Request  \nError response: 405 Method Not Allowed\n\nRequired fields:\n\n- name\n    \n- frequency\n    \n\nExample JSON body:  \n{  \n\"name\": \"Walk Daily\",  \n\"description\": \"Walk for 20 minutes\",  \n\"frequency\": \"Daily\"  \n}"
+      },
+      "response": []
+    },
+    {
+      "name": "Update Habit",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Drink More Water\",\r\n  \"description\": \"Drink 3 litres daily\",\r\n  \"frequency\": \"Daily\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/habits/1/update/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "habits",
+            "1",
+            "update",
+            ""
+          ]
+        },
+        "description": "Updates an existing habit by ID.\n\nMethod: PUT  \nURL: /api/habits//update/  \nSuccess response: 200 OK  \nError response: 400 Bad Request  \nError response: 404 Not Found  \nError response: 405 Method Not Allowed\n\nRequired fields:\n\n- name\n    \n- frequency\n    \n\nExample JSON body:  \n{  \n\"name\": \"Drink More Water\",  \n\"description\": \"Drink 3 litres daily\",  \n\"frequency\": \"Daily\"  \n}"
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Habit",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/habits/3/delete/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "habits",
+            "3",
+            "delete",
+            ""
+          ]
+        },
+        "description": "Deletes a habit by ID.\n\nMethod: DELETE  \nURL: /api/habits//delete/  \nSuccess response: 200 OK  \nError response: 404 Not Found  \nError response: 405 Method Not Allowed\n\nExample use:  \nDeletes the selected habit and returns a confirmation message."
+      },
+      "response": []
+    },
+    {
+      "name": "Habit Summary",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/habits/summary/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "habits",
+            "summary",
+            ""
+          ]
+        },
+        "description": "Returns a simple summary of habits in the database.\n\nMethod: GET  \nURL: /api/habits/summary/  \nSuccess response: 200 OK\n\nReturned fields:\n\n- total_habits\n    \n- daily_habits\n    \n- weekly_habits"
+      },
+      "response": []
+    }
+  ]
+}
