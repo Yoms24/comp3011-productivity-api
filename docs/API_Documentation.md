@@ -3,11 +3,31 @@
 ## Project
 COMP3011 Productivity API
 
-## Base URL
+## API Root Prefix
 `http://127.0.0.1:8000/api/`
 
+All endpoints in this project begin with this prefix.
+
 ## Overview
-This API was built using Django and SQLite. It supports CRUD operations for habits and includes a simple analytics summary endpoint.
+This API was built using Django and SQLite. It supports CRUD operations for habits, completion logging, and simple productivity analytics.
+
+---
+
+## Data Models
+
+### Habit
+- `id`
+- `name`
+- `description`
+- `frequency`
+- `created_at`
+
+### HabitLog
+- `id`
+- `habit`
+- `completed_on`
+- `notes`
+- `created_at`
 
 ---
 
@@ -73,6 +93,10 @@ Creates a new habit in the database.
 ### Optional Fields
 - `description`
 
+### Allowed Frequency Values
+- `Daily`
+- `Weekly`
+
 ### Example Request Body
 ```json
 {
@@ -90,6 +114,12 @@ Creates a new habit in the database.
 ```json
 {
   "error": "Name and frequency are required"
+}
+```
+
+```json
+{
+  "error": "Frequency must be either 'Daily' or 'Weekly'"
 }
 ```
 
@@ -117,6 +147,10 @@ Updates an existing habit by ID.
 ### Optional Fields
 - `description`
 
+### Allowed Frequency Values
+- `Daily`
+- `Weekly`
+
 ### Example Request Body
 ```json
 {
@@ -134,6 +168,12 @@ Updates an existing habit by ID.
 ```json
 {
   "error": "Name and frequency are required"
+}
+```
+
+```json
+{
+  "error": "Frequency must be either 'Daily' or 'Weekly'"
 }
 ```
 
@@ -208,6 +248,130 @@ Returns a simple summary of habit data.
 
 ---
 
+## 7. Create Habit Log
+
+**Method:** `POST`  
+**Endpoint:** `/habits/<id>/logs/create/`
+
+### Description
+Creates a completion log for a specific habit.
+
+### Required Fields
+- `completed_on`
+
+### Optional Fields
+- `notes`
+
+### Date Format
+- `YYYY-MM-DD`
+
+### Example Request Body
+```json
+{
+  "completed_on": "2026-03-08",
+  "notes": "Completed after Fajr"
+}
+```
+
+### Success Response
+**201 Created**
+
+### Error Responses
+**400 Bad Request**
+```json
+{
+  "error": "Invalid JSON body"
+}
+```
+
+```json
+{
+  "error": "completed_on must be a valid date in YYYY-MM-DD format"
+}
+```
+
+**404 Not Found**
+```json
+{
+  "error": "Habit not found"
+}
+```
+
+**405 Method Not Allowed**
+```json
+{
+  "error": "Only POST method is allowed"
+}
+```
+
+---
+
+## 8. Get Habit Logs
+
+**Method:** `GET`  
+**Endpoint:** `/habits/<id>/logs/`
+
+### Description
+Returns all completion logs for a specific habit.
+
+### Success Response
+**200 OK**
+
+### Example Response
+```json
+[
+  {
+    "id": 1,
+    "habit_id": 1,
+    "habit_name": "Drink More Water",
+    "completed_on": "2026-03-08",
+    "notes": "Completed after Fajr",
+    "created_at": "2026-03-08T16:39:34.817Z"
+  }
+]
+```
+
+### Error Response
+**404 Not Found**
+```json
+{
+  "error": "Habit not found"
+}
+```
+
+---
+
+## 9. Get Habit Streak
+
+**Method:** `GET`  
+**Endpoint:** `/habits/<id>/streak/`
+
+### Description
+Returns the current streak and total logs for a specific habit.
+
+### Success Response
+**200 OK**
+
+### Example Response
+```json
+{
+  "habit_id": 1,
+  "habit_name": "Drink More Water",
+  "current_streak": 1,
+  "total_logs": 1
+}
+```
+
+### Error Response
+**404 Not Found**
+```json
+{
+  "error": "Habit not found"
+}
+```
+
+---
+
 ## Status Codes Used
 - `200 OK`
 - `201 Created`
@@ -222,3 +386,4 @@ Returns a simple summary of habit data.
 - Git
 - GitHub
 - Postman
+- Django Test Framework
