@@ -1,7 +1,8 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import Habit
+from .models import Habit, HabitLog
 import json
+from datetime import date, timedelta
 
 ALLOWED_FREQUENCIES = ["Daily", "Weekly"]
 
@@ -15,7 +16,23 @@ def habit_to_dict(habit):
         "created_at": habit.created_at,
     }
 
+def log_to_dict(log):
+    return {
+        "id": log.id,
+        "habit_id": log.habit.id,
+        "habit_name": log.habit.name,
+        "completed_on": str(log.completed_on),
+        "notes": log.notes,
+        "created_at": log.created_at,
+    }
 
+
+def parse_date(value):
+    try:
+        return date.fromisoformat(value)
+    except (TypeError, ValueError):
+        return None
+    
 def parse_request_body(request):
     try:
         return json.loads(request.body)
@@ -138,6 +155,86 @@ def habit_summary(request):
         "total_habits": total_habits,
         "daily_habits": daily_habits,
         "weekly_habits": weekly_habits,
+    }
+
+    return JsonResponse(data)
+
+@csrf_exempt
+def habit_log_create(request, habit_id):
+    if request.method != "POST":
+        return method_not_allowed("POST")
+
+    habit = get_habit_or_404(habit_id)
+    if not habit:
+        return JsonResponse({"error": "Habit not found"}, status=404)
+
+    body = parse_request_body(request)
+    if not body:
+        return JsonResponse({"error": "Invalid JSON body"}, status=400)
+
+    completed_on = parse_date(body.get("completed_on"))
+    if not completed_on:
+        return JsonResponse(
+            {"error": "completed_on must be a valid date in YYYY-MM-DD format"},
+            status=400
+        )
+
+    log = HabitLog.objects.create(
+        habit=habit,
+        completed_on=completed_on,
+        notes=body.get("notes", "")
+    )
+
+    return JsonResponse(log_to_dict(log), status=201)
+
+
+def habit_log_list(request, habit_id):
+    if request.method != "GET":
+        return method_not_allowed("GET")
+
+    habit = get_habit_or_404(habit_id)
+    if not habit:
+        return JsonResponse({"error": "Habit not found"}, status=404)
+
+    logs = habit.logs.all()
+    data = [log_to_dict(log) for log in logs]
+    return JsonResponse(data, safe=False)
+
+def habit_streak(request, habit_id):
+    if request.method != "GET":
+        return method_not_allowed("GET")
+
+    habit = get_habit_or_404(habit_id)
+    if not habit:
+        return JsonResponse({"error": "Habit not found"}, status=404)
+
+    log_dates = list(
+        habit.logs.order_by("-completed_on").values_list("completed_on", flat=True)
+    )
+
+    unique_dates = []
+    for log_date in log_dates:
+        if log_date not in unique_dates:
+            unique_dates.append(log_date)
+
+    streak = 0
+    current_day = date.today()
+
+    for log_date in unique_dates:
+        if log_date == current_day:
+            streak += 1
+            current_day = current_day - timedelta(days=1)
+        elif log_date == current_day - timedelta(days=1) and streak == 0:
+            streak += 1
+            current_day = log_date - timedelta(days=1)
+        else:
+            break
+
+    data = {
+        "habit_id": habit.id,
+        "habit_name": habit.name,
+        "current_streak": streak,
+        "total_logs": habit.logs.count(),
     }
 
     return JsonResponse(data)

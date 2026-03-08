@@ -22,3 +22,18 @@ class Habit(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class HabitLog(models.Model):
+    habit = models.ForeignKey(Habit, on_delete=models.CASCADE, related_name="logs")
+    completed_on = models.DateField()
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-completed_on", "-created_at"]
+        verbose_name = "Habit Log"
+        verbose_name_plural = "Habit Logs"
+
+    def __str__(self):
+        return f"{self.habit.name} - {self.completed_on}"
