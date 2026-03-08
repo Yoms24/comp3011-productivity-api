@@ -2,6 +2,10 @@
 
 A Django-based REST-style API for tracking habits, recording completion logs, and providing simple productivity analytics.
 
+## API Documentation PDF
+
+[View the API Documentation PDF](docs/API_Documentation.pdf)
+
 ## Features
 - Create a habit
 - View all habits
