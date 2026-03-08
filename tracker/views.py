@@ -41,6 +41,33 @@ def habit_create(request):
 
     return JsonResponse({"error": "Only POST method is allowed"}, status=405)
 
+@csrf_exempt
+def habit_update(request, habit_id):
+    if request.method == 'PUT':
+        try:
+            habit = Habit.objects.get(id=habit_id)
+            body = json.loads(request.body)
+
+            habit.name = body.get('name', habit.name)
+            habit.description = body.get('description', habit.description)
+            habit.frequency = body.get('frequency', habit.frequency)
+            habit.save()
+
+            data = {
+                "id": habit.id,
+                "name": habit.name,
+                "description": habit.description,
+                "frequency": habit.frequency,
+                "created_at": habit.created_at,
+            }
+
+            return JsonResponse(data)
+
+        except Habit.DoesNotExist:
+            return JsonResponse({"error": "Habit not found"}, status=404)
+
+    return JsonResponse({"error": "Only PUT method is allowed"}, status=405)
+
 def habit_detail(request, habit_id):
     try:
         habit = Habit.objects.get(id=habit_id)
