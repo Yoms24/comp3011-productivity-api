@@ -53,6 +53,12 @@ def habit_update(request, habit_id):
             habit = Habit.objects.get(id=habit_id)
             body = json.loads(request.body)
 
+            if not body.get('name') or not body.get('frequency'):
+                return JsonResponse(
+                    {"error": "Name and frequency are required"},
+                    status=400
+                )
+
             habit.name = body.get('name', habit.name)
             habit.description = body.get('description', habit.description)
             habit.frequency = body.get('frequency', habit.frequency)
