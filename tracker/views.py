@@ -22,6 +22,11 @@ def habit_list(request):
 def habit_create(request):
     if request.method == 'POST':
         body = json.loads(request.body)
+        if not body.get('name') or not body.get('frequency'):
+            return JsonResponse(
+                {"error": "Name and frequency are required"},
+                status=400
+            )
 
         habit = Habit.objects.create(
             name=body.get('name'),
