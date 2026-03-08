@@ -1,6 +1,6 @@
 # COMP3011 Productivity API
 
-A Django-based REST-style API for tracking habits and simple productivity data.
+A Django-based REST-style API for tracking habits, recording completion logs, and providing simple productivity analytics.
 
 ## Features
 - Create a habit
@@ -9,8 +9,28 @@ A Django-based REST-style API for tracking habits and simple productivity data.
 - Update a habit
 - Delete a habit
 - View a simple habit summary
+- Create a completion log for a habit
+- View all logs for a habit
+- View a habit streak
 - JSON responses
-- Basic validation and error handling
+- Validation and error handling
+- Automated Django tests
+
+## Data Models
+
+### Habit
+- `id`
+- `name`
+- `description`
+- `frequency`
+- `created_at`
+
+### HabitLog
+- `id`
+- `habit`
+- `completed_on`
+- `notes`
+- `created_at`
 
 ## Endpoints
 
@@ -26,8 +46,8 @@ A Django-based REST-style API for tracking habits and simple productivity data.
 Example JSON body:
 
     {
-      "name": "Read Quran",
-      "description": "Read 2 pages after Fajr",
+      "name": "Walk Daily",
+      "description": "Walk for 20 minutes",
       "frequency": "Daily"
     }
 
@@ -38,7 +58,7 @@ Example JSON body:
 
     {
       "name": "Drink More Water",
-      "description": "Drink 2.5 litres daily",
+      "description": "Drink 3 litres daily",
       "frequency": "Daily"
     }
 
@@ -47,6 +67,22 @@ Example JSON body:
 
 ### Habit summary
 `GET /api/habits/summary/`
+
+### Create a habit log
+`POST /api/habits/<id>/logs/create/`
+
+Example JSON body:
+
+    {
+      "completed_on": "2026-03-08",
+      "notes": "Completed after Fajr"
+    }
+
+### Get habit logs
+`GET /api/habits/<id>/logs/`
+
+### Get habit streak
+`GET /api/habits/<id>/streak/`
 
 ## Tech stack
 - Python
@@ -63,6 +99,15 @@ Example JSON body:
 - 404 Not Found
 - 405 Method Not Allowed
 
+## Testing
+Automated tests were written using Django's testing framework to verify:
+- habit CRUD functionality
+- validation behaviour
+- summary endpoint
+- habit log creation
+- habit log listing
+- streak endpoint
+
 ## Running the project locally
 1. Clone the repository
 2. Install Django:
@@ -73,4 +118,4 @@ Example JSON body:
    `python manage.py runserver`
 
 ## Notes
-This project was developed incrementally with Git version control and tested using browser requests and Postman.
+This project was developed incrementally with Git version control and tested using browser requests, Postman, and Django automated tests.
