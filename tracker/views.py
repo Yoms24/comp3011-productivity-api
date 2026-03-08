@@ -68,6 +68,19 @@ def habit_update(request, habit_id):
 
     return JsonResponse({"error": "Only PUT method is allowed"}, status=405)
 
+@csrf_exempt
+def habit_delete(request, habit_id):
+    if request.method == 'DELETE':
+        try:
+            habit = Habit.objects.get(id=habit_id)
+            habit.delete()
+            return JsonResponse({"message": "Habit deleted successfully"})
+
+        except Habit.DoesNotExist:
+            return JsonResponse({"error": "Habit not found"}, status=404)
+
+    return JsonResponse({"error": "Only DELETE method is allowed"}, status=405)
+
 def habit_detail(request, habit_id):
     try:
         habit = Habit.objects.get(id=habit_id)
