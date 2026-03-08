@@ -1,8 +1,7 @@
-from django.test import TestCase
-
 from django.test import TestCase, Client
-from .models import Habit
+from .models import Habit, HabitLog
 import json
+from datetime import date
 
 
 class HabitApiTests(TestCase):
@@ -67,4 +66,34 @@ class HabitApiTests(TestCase):
 
     def test_habit_summary(self):
         response = self.client.get("/api/habits/summary/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_create_habit_log_success(self):
+        data = {
+            "completed_on": str(date.today()),
+            "notes": "Completed test log"
+        }
+        response = self.client.post(
+            f"/api/habits/{self.habit.id}/logs/create/",
+            data=json.dumps(data),
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 201)
+
+    def test_get_habit_logs(self):
+        HabitLog.objects.create(
+            habit=self.habit,
+            completed_on=date.today(),
+            notes="Log entry"
+        )
+        response = self.client.get(f"/api/habits/{self.habit.id}/logs/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_habit_streak(self):
+        HabitLog.objects.create(
+            habit=self.habit,
+            completed_on=date.today(),
+            notes="Today log"
+        )
+        response = self.client.get(f"/api/habits/{self.habit.id}/streak/")
         self.assertEqual(response.status_code, 200)
